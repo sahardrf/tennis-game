@@ -1,10 +1,9 @@
 package com.example.tennis.game;
-
-import org.junit.jupiter.params.ParameterizedTest;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.stream.Stream;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 public class TennisTest {
@@ -49,6 +48,7 @@ public class TennisTest {
                 {4, 6, "Win for player2"},
                 {16, 14, "Win for player1"},
                 {14, 16, "Win for player2"},
+                {40, 10, "Win for player1"}
         });
     }
 
@@ -69,4 +69,38 @@ public class TennisTest {
         TennisGame game = new TennisGame1("player1", "player2");
         checkAllScores(player1Points, player2Points, expectedScore, game);
     }
+
+  @Test
+  public void differentWonCallsForPlayers() {
+    TennisGame game = new TennisGame1("player1", "player2");
+    for (int i = 0; i < 3; i++) {
+      game.wonPoint("player1");
+      game.wonPoint("player2");
+    }
+    assertEquals("Deuce", game.getScore());
+    game.wonPoint("player1");
+    assertEquals("Advantage player1", game.getScore());
+    game.wonPoint("player2");
+    assertEquals("Deuce", game.getScore());
+    game.wonPoint("player2");
+    assertEquals("Advantage player2", game.getScore());
+    game.wonPoint("player1");
+    assertEquals("Deuce", game.getScore());
+  }
+
+  @Test
+  public void repeatedPointsForPlayer1() {
+    TennisGame game = new TennisGame1("player1", "player2");
+    for (int i = 0; i < 10; i++) {
+      game.wonPoint("player1");
+    }
+    assertEquals("Win for player1", game.getScore());
+  }
+
+  @Test
+  public void differentPlayerNames() {
+    TennisGame game = new TennisGame1("P1", "P2");
+    game.wonPoint("P1");
+    assertEquals("Fifteen-Love", game.getScore());
+  }
 }
